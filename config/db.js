@@ -6,13 +6,13 @@ let isConnected = false;
 export async function connectDB() {
   if (isConnected) return;
 
-  if (!process.env.MONGO_URI) {
-    CERROR("Missing MONGO_URI");
+  if (!process.env.MONGO_LOCAL_URI) {
+    CERROR("Missing MONGO_LOCAL_URI");
     return;
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(process.env.MONGO_LOCAL_URI, {
       bufferCommands: false,
       serverSelectionTimeoutMS: 8000,
       socketTimeoutMS: 45000,
