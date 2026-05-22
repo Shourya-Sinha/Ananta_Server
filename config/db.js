@@ -70,7 +70,7 @@ export async function connectDB() {
     socketTimeoutMS: 45000,
     maxPoolSize: 10,
     minPoolSize: 2,
-    keepAlive: true,
+    // keepAlive: true,
     family: 4, // Use IPv4
     retryWrites: true,
     retryReads: true,

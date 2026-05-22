@@ -7,14 +7,9 @@ import index from './routes/index.js'
 const app = express();
 
 
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
-    max: 500,
-    message: "Too many requests, try again later.",
-    skip: () => process.env.NODE_ENV === "development", // Skip in dev
-  })
-);
+app.use(express.json({limit:'10kb'}));
+app.use(express.urlencoded({extended:true,limit:'10kb'}));
+
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -61,8 +56,6 @@ app.use(cors({
     ],
 }));
 
-app.use(express.json({limit:'10kb'}));
-app.use(express.urlencoded({extended:true,limit:'10kb'}));
 
 app.use((req, res, next) => {
     if (req.query) res.locals.sanitizedQuery = expresSanitize.sanitize(req.query);
@@ -71,6 +64,26 @@ app.use((req, res, next) => {
 });
 
 // app.use(rateLimit(limiter));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 500, // Limit each IP to 500 requests per windowMs
+  message: "Too many requests, try again later.",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  // Custom key generator for Vercel/Cloudflare
+  keyGenerator: (req) => {
+    // Use the real IP from Cloudflare/Vercel headers
+    return req.headers['x-forwarded-for']?.split(',')[0] || 
+           req.headers['cf-connecting-ip'] || 
+           req.ip || 
+           'unknown';
+  },
+  // Skip in development
+  skip: () => process.env.NODE_ENV === "development",
+});
+
+app.use(limiter);
 
 // HEALTH CHECK ENDPOINT
 // =======================================
