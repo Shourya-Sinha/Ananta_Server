@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import { CERROR, CLOG } from "../utils/logger.js";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 let isConnected = false;
 
