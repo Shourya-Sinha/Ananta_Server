@@ -7,11 +7,14 @@ import index from './routes/index.js'
 const app = express();
 
 
-const limiter = rateLimit({
-    windowMs:60*60*1000,
-    max:3000,
-    message:'Too many Requests from this IP, please try again in an hour!'
-});
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 mins
+    max: 500,
+    message: "Too many requests, try again later.",
+    skip: () => process.env.NODE_ENV === "development", // Skip in dev
+  })
+);
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -34,6 +37,9 @@ const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:7171",
     "http://localhost:8080",
+    "https://ananta-server.vercel.app/api/v1",
+    "https://ananta-server.vercel.app/",
+    "https://ananta-server.vercel.app"
 ];
 
 app.use(cors({
@@ -65,6 +71,25 @@ app.use((req, res, next) => {
 });
 
 // app.use(rateLimit(limiter));
+
+// HEALTH CHECK ENDPOINT
+// =======================================
+app.get("/api/health", async (req, res) => {
+  const dbStatus = mongoose.connection.readyState;
+  const statusMap = {
+    0: "disconnected",
+    1: "connected",
+    2: "connecting",
+    3: "disconnecting",
+  };
+  
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    database: statusMap[dbStatus] || "unknown",
+    environment: process.env.NODE_ENV,
+  });
+});
 
 // Initial Router
 app.use("/api/v1",index);
