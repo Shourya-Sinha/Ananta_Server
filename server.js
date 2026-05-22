@@ -10,7 +10,7 @@ import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-import connectDB from "./config/db.js";
+import { connectDB } from "./config/db.js";
 import router from "./routes/index.js";
 
 import { requestLogger } from "./middleware/requestLogger.js";
@@ -74,12 +74,12 @@ let server;
 
 const startServer = async () => {
   try {
-    const { isConnected } = await connectDB();
+    await connectDB();
 
-    if (!isConnected) {
-      CERROR("❌ Database connection failed");
-      process.exit(1);
-    }
+    // if (!isConnected) {
+    //   CERROR("❌ Database connection failed");
+    //   process.exit(1);
+    // }
 
     CLOG("✅ Database Connected");
 
