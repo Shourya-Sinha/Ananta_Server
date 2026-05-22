@@ -1105,3 +1105,13 @@
 [2026-05-22T01:31:07.647Z] GET /api/v1/users/profile | Body: undefined
 [2026-05-22T01:31:07.701Z] GET /api/v1/users/profile | Body: undefined
 [2026-05-22T01:31:07.717Z] GET /api/v1/uploadDocs/documents | Body: undefined
+[2026-05-22T05:57:36.136Z] POST /api/v1/auth/register | Body: {"name":"Shourya","password":"123456","registrationMethod":"email","role":"worker","email":"shouryasinha.c@gmail.com"}
+[2026-05-22T05:58:48.632Z] POST /api/v1/auth/register | Body: {"name":"Shourya","password":"123456","registrationMethod":"email","role":"worker","email":"shouryasinha.c@gmail.com"}
+[2026-05-22T06:46:33.520Z] POST /api/v1/auth/register | Body: {"name":"Shourya","password":"123456","registrationMethod":"email","role":"worker","email":"shouryasinha.d@gmail.com"}
+[2026-05-22T06:48:26.184Z] POST /api/v1/auth/register | Body: {"name":"Shourya","password":"123456","registrationMethod":"email","role":"worker","email":"shouryasinha.c@gmail.com"}
+[2026-05-22T06:49:09.580Z] POST /api/v1/auth/register | Body: {"name":"Shourya","password":"123456","registrationMethod":"email","role":"worker","email":"shouryasinha.c@gmail.com"}
+[2026-05-22T06:49:30.200Z] POST /api/v1/auth/verify-otp | Body: {"otp":"827066","email":"shouryasinha.c@gmail.com"}
+[2026-05-22T06:49:31.267Z] GET /api/v1/users/worker/dashboard | Body: undefined
+[2026-05-22T06:49:42.076Z] GET /api/v1/uploadDocs/documents | Body: undefined
+[2026-05-22T06:49:42.085Z] GET /api/v1/users/profile | Body: undefined
+[2026-05-22T06:49:42.091Z] GET /api/v1/users/profile | Body: undefined

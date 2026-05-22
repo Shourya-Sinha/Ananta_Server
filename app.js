@@ -34,7 +34,11 @@ const allowedOrigins = [
     "http://localhost:8080",
     "https://ananta-server.vercel.app/api/v1",
     "https://ananta-server.vercel.app/",
-    "https://ananta-server.vercel.app"
+    "https://ananta-server.vercel.app",
+    "http://10.0.2.2:7171",
+    "http://10.0.2.2",
+    "http://10.0.2.2:7171/",
+    "http://10.0.2.2/",
 ];
 
 app.use(cors({

@@ -130,10 +130,10 @@ const userSchema = new mongoose.Schema({
 
   siteId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Site",
-    required: function () {
-      return this.role === "worker"; // Required for workers
-    }
+    // ref: "Site",
+    // required: function () {
+    //   return this.role === "worker"; // Required for workers
+    // }
   },
 
   // Keep for backward compatibility
