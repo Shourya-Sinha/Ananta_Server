@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import { SUCCESS } from "../utils/response.js";
+import { ERROR, SUCCESS } from "../utils/response.js";
 import { AppError } from "../utils/AppError.js";
 import { ERROR_CODES } from "../utils/errorCodes.js";
 import { CLOG, CERROR } from "../utils/logger.js";
@@ -47,9 +47,8 @@ export const register = async (req, res) => {
     role,
     password
   });
-
-  
-  if (phone) {
+  try {
+    if (phone) {
     let existsPhone = await User.findOne({ phone });
     CLOG("🔍 Checking phone:", phone);
 
@@ -146,6 +145,12 @@ const newUser = await User.create(userData);
   return SUCCESS(res, "User registered. Please verify OTP.", {
     userId: userData._id
   });
+  } catch (error) {
+    return ERROR(error.message,"User Registration Failed")
+  }
+
+  
+  
 };
 
 //------------------------------
