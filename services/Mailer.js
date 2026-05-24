@@ -1,7 +1,7 @@
 
 import nodemailer from "nodemailer";
 
-export const sendMail = async (emailData) => {
+ const sendMail = async (emailData) => {
   const transports = [
     {
       name: "Gmail 465 (secure)",
@@ -57,6 +57,9 @@ export const sendMail = async (emailData) => {
 
   throw new Error("All SMTP transports failed: " + lastError?.message);
 };
+
+export default sendMail;
+
 
 // import nodeMailer from "nodemailer";
 // import dotenv from "dotenv";
