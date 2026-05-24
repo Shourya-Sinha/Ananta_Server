@@ -124,9 +124,9 @@ const newUser = await User.create(userData);
   // send email OTP
   if (email) {
     await sendMail({
-      recipient: email,
+      to: email,
       subject: "Verify your account",
-      text: `Your OTP is ${otp}`,
+      // text: `Your OTP is ${otp}`,
       html: `<h2>Your OTP is: ${otp}</h2>`
     });
   }
@@ -146,7 +146,7 @@ const newUser = await User.create(userData);
     userId: userData._id
   });
   } catch (error) {
-    return ERROR(error.message,"User Registration Failed")
+    return ERROR(res, "User Registration Failed", 500, error.message);
   }
 
   

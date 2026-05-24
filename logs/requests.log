@@ -1115,3 +1115,14 @@
 [2026-05-22T06:49:42.076Z] GET /api/v1/uploadDocs/documents | Body: undefined
 [2026-05-22T06:49:42.085Z] GET /api/v1/users/profile | Body: undefined
 [2026-05-22T06:49:42.091Z] GET /api/v1/users/profile | Body: undefined
+[2026-05-24T01:52:46.261Z] POST /api/v1/auth/register | Body: {"name":"shourya sinha","password":"123456","registrationMethod":"email","role":"worker","email":"indrajeet.hacker@gmail.com"}
+[2026-05-24T01:53:27.106Z] POST /api/v1/auth/verify-otp | Body: {"otp":"865751","email":"indrajeet.hacker@gmail.com"}
+[2026-05-24T01:53:27.930Z] GET /api/v1/users/worker/dashboard | Body: undefined
+[2026-05-24T01:53:44.789Z] GET /api/v1/users/profile | Body: undefined
+[2026-05-24T01:53:44.807Z] GET /api/v1/uploadDocs/documents | Body: undefined
+[2026-05-24T01:53:44.814Z] GET /api/v1/users/profile | Body: undefined
+[2026-05-24T01:54:04.648Z] GET /api/v1/users/worker/dashboard | Body: undefined
+[2026-05-24T01:54:06.642Z] GET /api/v1/users/profile | Body: undefined
+[2026-05-24T01:54:06.657Z] GET /api/v1/uploadDocs/documents | Body: undefined
+[2026-05-24T01:54:06.667Z] GET /api/v1/users/profile | Body: undefined
+[2026-05-24T02:29:03.385Z] POST /api/v1/auth/register | Body: {"name":"hari","password":"123456","registrationMethod":"email","role":"worker","email":"krindrajeet.c@gmail.com"}
