@@ -242,7 +242,7 @@ export const register = async (req, res) => {
     try {
       if (email) {
         await sendEmail({
-          from: "Ananta App <no-reply@test-y7zpl98rkvr45vx6.mlsender.net>", // MUST match MailerSend sender
+          // from: "Ananta App <no-reply@test-y7zpl98rkvr45vx6.mlsender.net>", // MUST match MailerSend sender
           to: email,
           subject: "Verify your account",
           html: `<h2>Your OTP is: ${otp}</h2>`,

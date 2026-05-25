@@ -1,35 +1,64 @@
 // import { Resend } from "resend";
-import nodemailer from "nodemailer";
+import { MailerSend, EmailParams, Sender } from "mailersend";
 
-async function sendEmail({ to, subject, html, from }) {
-    try {
-        const transporter = nodemailer.createTransport({
-            host: "smtp.mailersend.net",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.MAILERSEND_USER,
-                pass: process.env.MAILERSEND_PASS
-            }
-        });
+async function sendEmail({ to, subject, html }) {
+  try {
+    const mailerSend = new MailerSend({
+      apiKey: process.env.MAILERSEND_API_KEY,
+    });
 
-        await transporter.sendMail({
-            from,  // <--- now dynamic
-            to,
-            subject,
-            html,
-        });
+    const sentFrom = new Sender(
+      "no-reply@test-y7zpl98rkvr45vx6.mlsender.net",
+      "Ananta App"
+    );
 
-        console.log("Email sent to:", to);
-        return true;
-    } catch (err) {
-        console.log("Email error:", err);
-        throw err;
-    }
+    const recipients = [{ email: to }];
+
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setSubject(subject)
+      .setHtml(html);
+
+    await mailerSend.email.send(emailParams);
+
+    console.log("Email sent:", to);
+    return true;
+  } catch (err) {
+    console.log("Email error:", err);
+    return false;
+  }
 }
 
 export default sendEmail;
 
+
+// async function sendEmail({ to, subject, html, from }) {
+//     try {
+//         const transporter = nodemailer.createTransport({
+//             host: "smtp.mailersend.net",
+//             port: 587,
+//             secure: false,
+//             auth: {
+//                 user: process.env.MAILERSEND_USER,
+//                 pass: process.env.MAILERSEND_PASS
+//             }
+//         });
+
+//         await transporter.sendMail({
+//             from,  // <--- now dynamic
+//             to,
+//             subject,
+//             html,
+//         });
+
+//         console.log("Email sent to:", to);
+//         return true;
+//     } catch (err) {
+//         console.log("Email error:", err);
+//         throw err;
+//     }
+// }
 
 // import dotenv from 'dotenv';
 // dotenv.config();
