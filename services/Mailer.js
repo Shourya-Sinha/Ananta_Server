@@ -1,30 +1,61 @@
-import { Resend } from "resend";
-import dotenv from 'dotenv';
-dotenv.config();
+// import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+async function sendEmail({ to, subject, html, from }) {
+    try {
+        const transporter = nodemailer.createTransport({
+            host: "smtp.mailersend.net",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.MAILERSEND_USER,
+                pass: process.env.MAILERSEND_PASS
+            }
+        });
 
-async function sendEmail(to, subject, html) {
-  try {
-    const result = await resend.emails.send({
-      from: "Ananta Infratech Solutions <onboarding@resend.dev>",
-      to,
-      subject,
-      html,
-    });
+        await transporter.sendMail({
+            from,  // <--- now dynamic
+            to,
+            subject,
+            html,
+        });
 
-    console.log("EMAIL SENT:", result);
-    return true;
-  } catch (error) {
-    console.error("EMAIL ERROR:", error);
-    return false;
-  }
+        console.log("Email sent to:", to);
+        return true;
+    } catch (err) {
+        console.log("Email error:", err);
+        throw err;
+    }
 }
 
 export default sendEmail;
 
 
+// import dotenv from 'dotenv';
+// dotenv.config();
 
+// const resend = new Resend(process.env.RESEND_API_KEY);
+
+// async function sendEmail({ to, subject, html }) {
+//     if (!to || typeof to !== "string") {
+//         console.error("❌ Email must be a string:", to);
+//         return false;
+//     }
+//     try {
+//         const result = await resend.emails.send({
+//             from: "Ananta Infratech Solutions <onboarding@resend.dev>",
+//             to:to.trim(),
+//             subject,
+//             html,
+//         });
+
+//         console.log("EMAIL SENT:", result);
+//         return true;
+//     } catch (error) {
+//         console.error("EMAIL ERROR:", error);
+//         return false;
+//     }
+// }
 // import nodemailer from "nodemailer";
 
 //  const sendMail = async (emailData) => {

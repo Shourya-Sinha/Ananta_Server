@@ -6,7 +6,7 @@ import { CLOG, CERROR } from "../utils/logger.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from 'crypto';
-import sendMail from "../services/Mailer.js";
+import sendEmail from "../services/Mailer.js";
 
 
 function generateSecureOTP() {
@@ -37,120 +37,244 @@ function generateTokens(user) {
 // ------------------------------
 // REGISTER (Admin + Worker)
 // ------------------------------
+// export const register = async (req, res) => {
+//   const { name, phone, password, role, email } = req.body;
+
+//   CLOG("📥 REGISTER REQUEST:", {
+//     name,
+//     phone,
+//     email,
+//     role,
+//     password
+//   });
+
+//     if (phone) {
+//     let existsPhone = await User.findOne({ phone });
+//     CLOG("🔍 Checking phone:", phone);
+
+//     existsPhone = await User.findOne({ phone });
+
+//     if (existsPhone) {
+//       CLOG("❌ PHONE MATCH FOUND:", {
+//         inputPhone: phone,
+//         dbPhone: existsPhone.phone,
+//         userId: existsPhone._id,
+//       });
+
+//       throw new AppError({
+//         message: "Phone already exists",
+//         statusCode: ERROR_CODES.CONFLICT,
+//         type: "USER_ALREADY_EXISTS",
+//       });
+//     }
+//   }
+
+//   CLOG("🔍 Checking email:", email);
+
+//   if (email) {
+//   let existsEmail = await User.findOne({ email });
+
+//     CLOG("🔍 Checking email:", email);
+
+//     existsEmail = await User.findOne({ email });
+
+//     if (existsEmail) {
+//       CLOG("❌ EMAIL MATCH FOUND:", {
+//         inputEmail: email,
+//         dbEmail: existsEmail.email,
+//         userId: existsEmail._id,
+//       });
+
+//       throw new AppError({
+//         message: "Email Already Exists",
+//         statusCode: ERROR_CODES.CONFLICT,
+//         type: "USER_ALREADY_EXISTS",
+//       });
+//     }
+//   }
+//   const hashed = await bcrypt.hash(password, 10);
+
+//   const otp = generateSecureOTP(); // 6 digit secure otp
+//   CLOG("OTP GENERATED IN REGISTER CONTROLLER:", otp);
+
+//   const hashedOTP = await bcrypt.hash(otp, 10);
+
+//   const userData = {
+//     name,
+//     password: hashed,
+//     role,
+//     otp: hashedOTP,
+//     otpExpiry: Date.now() + 10 * 60 * 1000,
+//     isOtpAccVerified: false,
+//     dailyRate: 0,            // Worker will not set
+//     Designationverify: "Unverified",
+//     idVerified: "Unverified"
+//   };
+//   if (phone) {
+//   userData.phone = phone;
+// }
+// if (email) {
+//   userData.email = email;
+// }
+
+// const newUser = await User.create(userData);
+
+//   CLOG("NEW USER REGISTERED:", userData.phone);
+
+//   // send email OTP
+//   if (email) {
+//     await sendMail({
+//       to: email,
+//       subject: "Verify your account",
+//       // text: `Your OTP is ${otp}`,
+//       html: `<h2>Your OTP is: ${otp}</h2>`
+//     });
+//     CLOG("OTP send in email-:", otp);
+//   }
+
+//   CLOG("USER REGISTERED, OTP SENT:", email || phone);
+
+//   // if (err.code === 11000) {
+//   //   console.error("🔥 Mongo Duplicate Error:", err.keyValue);
+
+//   //   return res.status(409).json({
+//   //     success: false,
+//   //     message: `Duplicate value: ${JSON.stringify(err.keyValue)}`
+//   //   });
+//   // }
+
+//   return SUCCESS(res, "User registered. Please verify OTP.", {
+//     userId: userData._id
+//   });
+
+
+
+
+// };
 export const register = async (req, res) => {
-  const { name, phone, password, role, email } = req.body;
-
-  CLOG("📥 REGISTER REQUEST:", {
-    name,
-    phone,
-    email,
-    role,
-    password
-  });
   try {
+    const { name, phone, password, role, email } = req.body;
+
+    CLOG("📥 REGISTER REQUEST:", { name, phone, email, role });
+
+    /* -----------------------------------------
+     CHECK PHONE
+    ------------------------------------------ */
     if (phone) {
-    let existsPhone = await User.findOne({ phone });
-    CLOG("🔍 Checking phone:", phone);
+      const existsPhone = await User.findOne({ phone });
+      if (existsPhone) {
+        CLOG("❌ PHONE MATCH FOUND:", {
+          inputPhone: phone,
+          dbPhone: existsPhone.phone,
+          userId: existsPhone._id,
+        });
 
-    existsPhone = await User.findOne({ phone });
-
-    if (existsPhone) {
-      CLOG("❌ PHONE MATCH FOUND:", {
-        inputPhone: phone,
-        dbPhone: existsPhone.phone,
-        userId: existsPhone._id,
-      });
-
-      throw new AppError({
-        message: "Phone already exists",
-        statusCode: ERROR_CODES.CONFLICT,
-        type: "USER_ALREADY_EXISTS",
-      });
+        throw new AppError({
+          message: "Phone already exists",
+          statusCode: ERROR_CODES.CONFLICT,
+          type: "USER_ALREADY_EXISTS",
+        });
+      }
     }
-  }
 
-  CLOG("🔍 Checking email:", email);
+    /* -----------------------------------------
+     CHECK EMAIL
+    ------------------------------------------ */
+    if (email) {
+      const existsEmail = await User.findOne({ email });
+      if (existsEmail) {
+        CLOG("❌ EMAIL MATCH FOUND:", {
+          inputEmail: email,
+          dbEmail: existsEmail.email,
+          userId: existsEmail._id,
+        });
 
-  if (email) {
-  let existsEmail = await User.findOne({ email });
-
-    CLOG("🔍 Checking email:", email);
-
-    existsEmail = await User.findOne({ email });
-
-    if (existsEmail) {
-      CLOG("❌ EMAIL MATCH FOUND:", {
-        inputEmail: email,
-        dbEmail: existsEmail.email,
-        userId: existsEmail._id,
-      });
-
-      throw new AppError({
-        message: "Email Already Exists",
-        statusCode: ERROR_CODES.CONFLICT,
-        type: "USER_ALREADY_EXISTS",
-      });
+        throw new AppError({
+          message: "Email already exists",
+          statusCode: ERROR_CODES.CONFLICT,
+          type: "USER_ALREADY_EXISTS",
+        });
+      }
     }
-  }
-  const hashed = await bcrypt.hash(password, 10);
 
-  const otp = generateSecureOTP(); // 6 digit secure otp
-  CLOG("OTP GENERATED IN REGISTER CONTROLLER:", otp);
+    /* -----------------------------------------
+     HASH PASSWORD + OTP
+    ------------------------------------------ */
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const hashedOTP = await bcrypt.hash(otp, 10);
+    const otp = generateSecureOTP();
+    CLOG("OTP GENERATED:", otp);
 
-  const userData = {
-    name,
-    password: hashed,
-    role,
-    otp: hashedOTP,
-    otpExpiry: Date.now() + 10 * 60 * 1000,
-    isOtpAccVerified: false,
-    dailyRate: 0,            // Worker will not set
-    Designationverify: "Unverified",
-    idVerified: "Unverified"
-  };
-  if (phone) {
-  userData.phone = phone;
-}
-if (email) {
-  userData.email = email;
-}
+    const hashedOTP = await bcrypt.hash(otp, 10);
 
-const newUser = await User.create(userData);
+    /* -----------------------------------------
+     BUILD USER DATA
+    ------------------------------------------ */
+    const userData = {
+      name,
+      password: hashedPassword,
+      role,
+      otp: hashedOTP,
+      otpExpiry: Date.now() + 10 * 60 * 1000,
+      isOtpAccVerified: false,
+      dailyRate: 0,
+      Designationverify: "Unverified",
+      idVerified: "Unverified",
+    };
 
-  CLOG("NEW USER REGISTERED:", userData.phone);
+    if (phone) userData.phone = phone;
+    if (email) userData.email = email;
 
-  // send email OTP
-  if (email) {
-    await sendMail({
-      to: email,
-      subject: "Verify your account",
-      // text: `Your OTP is ${otp}`,
-      html: `<h2>Your OTP is: ${otp}</h2>`
+    /* -----------------------------------------
+     SAVE USER
+    ------------------------------------------ */
+    const newUser = await User.create(userData);
+
+    CLOG("NEW USER REGISTERED:", {
+      _id: newUser._id,
+      phone: newUser.phone,
+      email: newUser.email,
     });
-  }
 
-  CLOG("USER REGISTERED, OTP SENT:", email || phone);
+    /* -----------------------------------------
+     SEND OTP EMAIL IF EMAIL PRESENT
+    ------------------------------------------ */
+    try {
+      if (email) {
+        await sendEmail({
+          from: "Ananta App <no-reply@test-y7zpl98rkvr45vx6.mlsender.net>", // MUST match MailerSend sender
+          to: email,
+          subject: "Verify your account",
+          html: `<h2>Your OTP is: ${otp}</h2>`,
+        });
 
-  // if (err.code === 11000) {
-  //   console.error("🔥 Mongo Duplicate Error:", err.keyValue);
+        CLOG("📧 OTP Email Sent:", { email, otp });
+      }
+    } catch (error) {
+      CLOG("Error in sending email ! Please try again later");
 
-  //   return res.status(409).json({
-  //     success: false,
-  //     message: `Duplicate value: ${JSON.stringify(err.keyValue)}`
-  //   });
-  // }
+      await User.findByIdAndDelete(newUser._id);  // rollback
 
-  return SUCCESS(res, "User registered. Please verify OTP.", {
-    userId: userData._id
-  });
+      return ERROR(
+        res,
+        error.message || "Failed to send OTP. Please try again later."
+      );
+    }
+
+
+    CLOG("USER REGISTERED, OTP SENT TO:", email || phone);
+
+    /* -----------------------------------------
+     SUCCESS RESPONSE
+    ------------------------------------------ */
+    return SUCCESS(res, "User registered. Please verify OTP.", {
+      userId: newUser._id,
+    });
+
   } catch (error) {
-    return ERROR(res, "User Registration Failed", 500, error.message);
+    CLOG("🔥 REGISTER ERROR:", error);
+    return ERROR(res, error.message || "Registration failed", 500, error);
   }
-
-  
-  
 };
 
 //------------------------------
@@ -245,9 +369,9 @@ export const sendOtp = async (req, res) => {
     CLOG("SENDING OTP TO EMAIL:", email);
 
     await sendMail({
-      recipient: email,
+      to: email,
       subject: "Your OTP for Account Verification",
-      text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
+      // text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
       html: `
         <div style="font-family: Arial; padding: 20px;">
             <h2>Your Verification Code</h2>
@@ -374,7 +498,7 @@ export const verifyOtp = async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV !== "Development",
     sameSite: "strict",
-    maxAge: 30 *24 * 60 * 60* 1000, // 15 min
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 15 min
   });
 
   res.cookie("refreshToken", refreshToken, {
@@ -488,7 +612,7 @@ export const login = async (req, res) => {
     httpOnly: true,
     secure: !isDev,
     sameSite: "strict",
-    maxAge: 30 *24 * 60 * 60* 1000, // 30 days
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 
   res.cookie("refreshToken", refreshToken, {
